@@ -19,11 +19,8 @@ class action_plugin_singlesearchresult extends DokuWiki_Action_Plugin {
 
     public function register(Doku_Event_Handler &$controller) {
         $controller->register_hook('SEARCH_QUERY_FULLPAGE', 'AFTER', $this, 'handle_search_query_pagelookup');
-        //$controller->register_hook('ACTION_ACT_PREPROCESS', 'AFTER', $this, 'handle_search_query_pagelookup1');
     }
 
-    // Bei einem Ergebnis ein trigger_event (ACTION_ACT_PREPROCESS) ausl�sen, dass ein redirect macht.?
-    
     public function handle_search_query_pagelookup(Doku_Event &$event, $param) {
         global $conf;
         $result = $event->result;
@@ -40,7 +37,7 @@ class action_plugin_singlesearchresult extends DokuWiki_Action_Plugin {
 
             if($perm > AUTH_NONE) {
                 if($conf['allowdebug']) {
-                    msg("Only one page found, skipping result overview. Redirect to: " . $pageid);
+                    msg("Only one page found, skipping result overview. Redirect to: ".$pageid);
                 }
                 $link = wl($pageid, '', true);
                 print "<script type='text/javascript'>window.location.href='$link'</script>";
