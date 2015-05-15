@@ -1,7 +1,7 @@
 base   singlesearchresult
 author Matthias Schulte
 email  dokuwiki@lupo49.de
-date   2013-04-07
+date   2015-05-15
 name   singlesearchresult plugin
 desc   Redirects directly to found page when only one page is found
 url    https://www.dokuwiki.org/plugin:singlesearchresult

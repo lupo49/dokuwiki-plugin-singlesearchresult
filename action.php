@@ -3,7 +3,7 @@
  * DokuWiki Plugin singlesearchresult (Action Component)
  *
  * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
- * @author  Matthias Schulte <dokuwiki@lupo49.de>
+ * @author  Matthias Schulte <dokuwiki@lupo49.de>, Florian Straub <flominator@gmx.net>
  */
 
 // must be run within Dokuwiki
@@ -17,17 +17,40 @@ require_once DOKU_PLUGIN.'action.php';
 
 class action_plugin_singlesearchresult extends DokuWiki_Action_Plugin {
 
+	public $num_page_titles;
+	public $the_one_hit;
+
     public function register(Doku_Event_Handler &$controller) {
-        $controller->register_hook('SEARCH_QUERY_FULLPAGE', 'AFTER', $this, 'handle_search_query_pagelookup');
+        $controller->register_hook('SEARCH_QUERY_FULLPAGE', 'AFTER', $this, 'handle_search_query_fullpage');
+		
+		$controller->register_hook('SEARCH_QUERY_PAGELOOKUP', 'AFTER', $this, 'handle_search_query_pagelookup');
     }
 
-    public function handle_search_query_pagelookup(Doku_Event &$event, $param) {
+	public function handle_search_query_pagelookup(Doku_Event &$event, $param) 
+	{
+		$this->num_page_titles=count($event->result);
+		
+		if($this->num_page_titles==1)
+		{
+			$this->the_one_hit = key($event->result);
+		}
+				
+	}
+    public function handle_search_query_fullpage(Doku_Event &$event, $param) {
         global $conf;
-        $result = $event->result;
-
+		$pageid ="";
+		if(count($result)<=1 && $this->num_page_titles == 1)
+		{
+			$pageid= $this->the_one_hit;
+		}
+		
+		if(count($event->result) == 1 && $this->num_page_titles == 0) 
+		{
+			$pageid = key($event->result);
+		}
+		
         // Only one page found, skip result overview and open the found page
-        if(count($result) == 1) {
-            $pageid = key($result);
+        if($pageid != "") {
 
             if($_SERVER['REMOTE_USER']) {
                 $perm = auth_quickaclcheck($pageid);
