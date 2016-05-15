@@ -28,7 +28,7 @@ class action_plugin_singlesearchresult extends DokuWiki_Action_Plugin {
         // Only one page found, skip result overview and open the found page
         if(count($result) == 1) {
             $pageid = key($result);
-
+            $data= $event->data;
             if($_SERVER['REMOTE_USER']) {
                 $perm = auth_quickaclcheck($pageid);
             } else {
@@ -39,8 +39,8 @@ class action_plugin_singlesearchresult extends DokuWiki_Action_Plugin {
                 if($conf['allowdebug']) {
                     msg("Only one page found, skipping result overview. Redirect to: ".$pageid);
                 }
-                $link = wl($pageid, '', true);
-                print "<script type='text/javascript'>window.location.href='$link'</script>";
+                $link = wl($pageid, 's[]='.implode("",$data['highlight']), true);
+                send_redirect($link);
             }
         }
     }
